@@ -255,3 +255,98 @@ const App = () => (
 )
 ReactDOM.render(<App />, document.getElementById('root'))
 ```
+
+## FormStep
+
+> 分步表单，主要用于大量表单填写，需要区分步骤的场景，使用FormStep和FormSpy
+
+#### Demo 示例
+
+```jsx
+import React from 'react'
+import ReactDOM from 'react-dom'
+import {
+  SchemaForm,
+  FormStep,
+  Field,
+  FormButtonGroup,
+  Submit,
+  Reset,
+  FormSpy
+} from '@uform/next'
+import { Button } from '@alifd/next'
+import Printer from '@uform/printer'
+import '@alifd/next/dist/next.css'
+
+const App = () => (
+  <Printer>
+    <SchemaForm onSubmit={v => console.log(v)}>
+      <FormStep
+        dataSource={[
+          { title: "步骤1", name: 'basicInfo' },
+          { title: "步骤2", name: '*(companyInfo,itemInfo)' },
+          { title: "步骤3", name: 'businessInfo' }
+        ]}
+      />
+      <Field type="object" name="basicInfo">
+        <Field type="string" name="a1" title="查询字段1" />
+        <Field type="string" name="a2" title="查询字段2" />
+        <Field type="string" name="a3" title="查询字段3" />
+        <Field type="string" name="a4" title="查询字段4" />
+      </Field>
+
+       <Field type="object" name="companyInfo">
+        <Field type="string" name="a5" title="查询字段5" />
+        <Field type="string" name="a6" title="查询字段6" />
+        <Field type="string" name="a7" title="查询字段7" />
+        <Field type="string" name="a8" title="查询字段8" />
+      </Field>
+
+       <Field type="object" name="itemInfo">
+        <Field type="string" name="a9" title="查询字段9" />
+        <Field type="string" name="a10" title="查询字段10" />
+        <Field type="string" name="a11" title="查询字段11" />
+        <Field type="string" name="a12" title="查询字段12" />
+      </Field>
+
+      <Field type="object" name="businessInfo">
+        <Field type="string" name="a13" title="查询字段13" />
+        <Field type="string" name="a14" title="查询字段14" />
+        <Field type="string" name="a15" title="查询字段15" />
+        <Field type="string" name="a16" title="查询字段16" />
+      </Field>
+
+      <FormSpy
+        selector={`*(${FormStep.ON_FORM_STEP_CURRENT_CHANGE})`}
+        reducer={(state, action) => {
+          switch (action.type) {
+            case FormStep.ON_FORM_STEP_CURRENT_CHANGE:
+              return { ...state, step: action.payload }
+            default:
+              return { step: { value: 0 } }
+          }
+        }}
+      >
+        {({ state }) => {
+          const formStepState = state.step ? state : { step: { value: 0 } }
+          return (
+            <FormButtonGroup>
+              <Button
+                disabled={formStepState.step.value === 0}
+                onClick={() => {schemaActions.dispatch(FormStep.ON_FORM_STEP_PREVIOUS)}}
+              >
+                上一步
+              </Button>
+              <Button onClick={() => {schemaActions.dispatch(FormStep.ON_FORM_STEP_NEXT)}}>
+                下一步
+              </Button>
+              <Submit>提交</Submit>
+              ​<Reset>重置</Reset>​
+            </FormButtonGroup>)
+        }}
+      </FormSpy>
+    </SchemaForm>
+  </Printer>
+)
+ReactDOM.render(<App />, document.getElementById('root'))
+```
